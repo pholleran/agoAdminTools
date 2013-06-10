@@ -2,11 +2,7 @@
 
 AGO Admin Tools is a JavaScript application designed to provide additional administrative capabilities to ArcGIS Online.
 
-```Replace 'rockstar-repo-template' and 'alaframboise' with your project and username```
-
 [View it live](http://pholleran.github.com/agoAdminTools/index.html)
-
-```![App](https://raw.github.com/alaframboise/rockstar-repo-template/master/app.png)```
 
 ## Features
 
