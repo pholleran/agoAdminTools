@@ -25,7 +25,7 @@ AGO Admin Tools is a JavaScript application designed to provide additional admin
 ### Images Folder
 * images go here
 
-### JS
+### JS Folder
 * portal.js: any functions calling the Esri Portal REST API should go in this file
 * app.js: any post-initialization application functions (layout, etc,) should go in this file
 * layout.js: this file is run on load and handles the initial layout of the application
