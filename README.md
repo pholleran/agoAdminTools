@@ -14,13 +14,17 @@ AGO Admin Tools is a JavaScript application designed to provide additional admin
 
 ### Root Folder
 * index.html
+
 ### CSS Folder
 * styles.css
+
 ### Custom Folder
 * templates folder: contians html templates for ContentPanes used to populate tabs
 * mapTab.js: code for map tab
+
 ### Images Folder
 * images go here
+
 ### JS
 * portal.js: any functions calling the Esri Portal REST API should go in this file
 * app.js: any post-initialization application functions (layout, etc,) should go in this file
