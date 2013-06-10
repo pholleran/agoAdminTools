@@ -1,0 +1,47 @@
+<div>
+	<div id="shortUrlCP" data-dojo-type="dijit/layout/ContentPane">
+		<script type="dojo/method">
+	        require(["dojo/dom"],function(dom){dom.byId("currentShortUrlSpan").innerHTML = sessionStorage.getItem("urlKey");})
+	    </script>
+	</div>
+	<div id="shortUrlCP2" data-dojo-type="dijit/layout/ContentPane" style="margin:10px">
+		
+		<div id="shortURLupdateDescription" style="width:60%">
+			<h1 class="blue">Description</h1>
+			<h2>* ArcGIS Online Hosted Portals Only</h2>
+			<p>Running this task will attempt to update your org's URL key.  Your URL key is used to create your org's URL. The format is <b>http:&#47;&#47;&#60;urlKey&#62;.maps.arcgis.com</b>.</p>
+			
+			<p>If the urlKey is successfully updated, all urls of Esri-hosted web mapping applications in your org will be updated. After the task is complete, you will need to update
+			any reference to these URLs outside of ArcGIS Online.</p>
+		</div>
+		<br>
+		<div id="shortUrlForm" data-dojo-type="dijit/form/Form">
+			<table class="form">
+				<tr>
+					<td>
+						<p><b>Current URL Key:&nbsp; </b></p>
+					</td>
+					<td>
+						<p><span id="currentShortUrlSpan"></span></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p><b>New URL Key:&nbsp;</b></p>
+					</td>
+					<td>
+						<p><input id="newShortUrl" data-dojo-type="dijit/form/TextBox"/></p>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="shortUrlButtonDiv">
+			<button id="shortUrlButton" data-dojo-type="dijit.form.Button" data-dojo-props="">
+				<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+			        require(["js/portal",],function(portal){portal.updateShortUrl()})
+			    </script>
+				Update URL Key
+			</button>
+		</div>
+	</div>
+</div>

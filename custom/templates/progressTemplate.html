@@ -1,0 +1,19 @@
+<div>
+    <div id="userProgressText"></div>
+    <br>
+    <div id="folderProgressText"></div>
+    <br>
+    <div id="itemProgressText"></div>
+    <br>
+    <div id="updateButtonDiv">
+        <button id="dialogButton" data-dojo-type="dijit.form.Button" data-dojo-props="" disabled="true" label="Updating">
+            <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+                require(["dijit/registry", "dojo/dom-style"],function(registry,domStyle){
+                    registry.byId("progressDialog").hide();
+                    registry.byId("dialogButton").set("label", "Updating");
+                    registry.byId("dialogButton").set("disabled", true);
+                })
+            </script>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<div>
+	<div data-dojo-type="dijit/layout/ContentPane">
+		<script type="dojo/method">
+	        require(["custom/mapTab",],function(mapTab){mapTab.createMap()})
+	    </script>	
+	</div>
+	<div id="mapCP" data-dojo-type="dijit/layout/ContentPane" style="margin:10px">
+		
+		<div id="shortURLupdateDescription" style="width:60%">
+			<h1 class="blue">Description</h2>
+			<p>This task will update the default map extent of your org.</p>
+		</div>
+		
+		
+		<div id="mapDiv" style="width:600px ;height: 400px; background-color: gray;">
+			
+		</div>
+		<div id="extentDiv" style="width: 600px; height: 50px; background-color: white;"></div>
+		<div id="buttonDiv">
+			<button id="setExtentButton" data-dojo-type="dijit.form.Button" data-dojo-props="">
+				<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+			        require(["custom/mapTab",],function(mapTab){mapTab.setExtent()})
+			    </script>
+				Update Extent
+			</button>
+		</div>
+	</div>	
+</div>

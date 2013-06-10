@@ -1,0 +1,80 @@
+<div>
+	<div id="updateServerNameCP" data-dojo-type="dijit/layout/ContentPane" style="margin:10px">
+		<div id="updateServerNameForm" data-dojo-type="dijit/form/Form">
+			<div id="updateServerNameDescription" style="width:60%">
+				<h1 class="blue">Description</h2>
+				<p> 
+					This task is designed to re-path servers and services registered within your organization. It takes an Old Path, looks for all references to the path within an org, and updates items with the new path.
+				</p>
+				<p>
+					This task will update all references in:
+				</p>
+				<ul>
+					<li>Registered Services;</li>
+					<li>Registered Items;</li>
+					<li>References in Webmaps; and</li>
+					<li>Application URLs</li>
+				</ul>
+				<p>
+					* note: While this task will update all of the webmaps in your org with the new path, <b>it will break</b> any webmaps in other orgs that reference these resources.
+				</p>
+				<br>	
+				<h1 class="blue">Use Cases</h2>
+				<h2 class="blue">GIS Server Name Change</h3>
+				<p>
+					Your existing server (www.myorg.com/arcgis/rest/services) is being renamed to www.myorgsite.com/arcgis/rest/services. The tool will take the old path (www.myorg.com/arcgis/rest/services) and repath all references to this server (within your org) to the new path (www.myorgsite.com/arcgis/rest/services).
+				</p>
+				<h2 class="blue">Web Server Name Change</h3>
+				<p>
+					Your existing web server (www.myorg.com) is being renamed to www.myorgsite.com. The tool will take the old path (www.myorg.com) and repath all references to this server (within your org) to the new path (www.myorgsite.com).
+				</p>
+				<br>
+				<br>
+			</div>
+			<table class="form">
+				<tr>
+					<td>
+						<p><b>Old Path:&nbsp; </b></p>
+					</td>
+					<td>
+						<p><input id="currentServerPath" data-dojo-type="dijit/form/TextBox" placeHolder="<oldServerName>/<webAdaptor>"></p>
+					</td>
+					<td>
+						<span style="font-size: 10px"><i>e.g. myOldGisServer/arcgis</i></span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p><b>New Path:&nbsp;</b></p>
+					</td>
+					<td>
+						<p><input id="newServerPath" data-dojo-type="dijit/form/TextBox" placeHolder="<newServerName>/<webAdaptor>"/></p>
+					</td>
+					<td>
+						<span style="font-size: 10px"><i>e.g. myNewGisServer/arcgis</i></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="updateServerButtonDiv">
+			<button id="updateServerButton" data-dojo-type="dijit.form.Button" data-dojo-props="">
+				<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+			        require(["js/app","js/portal","dijit/registry"],function(app,portal,registry){
+			        	app.showBusy();
+			        	registry.byId("progressDialog").show();
+			        	portal.getUserInfos(["username"]).then(function(response){
+		        			var oldPath = registry.byId("currentServerPath").get("value");
+		        			var newPath = registry.byId("newServerPath").get("value");
+		        			portal.updateAllItemURLs(response, oldPath, newPath).then(function(response){
+		        				app.hideBusy();
+		        				registry.byId("currentServerPath").set("value","");
+		        				registry.byId("newServerPath").set("value","");
+			        		})
+			        	})
+			        })
+			    </script>
+				Update Server Name
+			</button>
+		</div>
+	</div>
+</div>
