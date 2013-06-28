@@ -99,7 +99,7 @@ define([
 
         var urlBasedItems = ['Feature Service', 'Map Service', 'Image Service', 'Web Mapping Application',
             'WMS','WMTS', 'Geodata Service', 'Globe Service','Geometry Service', 'Geocoding Service',
-            'Network Analysis Service', 'Geoprocessing Service','Mobile Application', 'url', 'Document Link']
+            'Network Analysis Service', 'Geoprocessing Service','Mobile Application', 'Document Link']
         var pattern = new RegExp(regexp.escapeString(oldPath));
         var usersCompleted = 0;
         var dialog = registry.byId("progressDialog");
