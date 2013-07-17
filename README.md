@@ -2,6 +2,7 @@
 
 AGO Admin Tools is a JavaScript application designed to provide additional administrative capabilities to ArcGIS Online.
 
+* ISSUE: Progress indicators not currently updating in Chrome.
 [View it live](http://pholleran.github.com/agoAdminTools/index.html)
 
 ## Features
