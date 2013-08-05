@@ -4,6 +4,8 @@ AGO Admin Tools is a JavaScript application designed to provide additional admin
 
 * ISSUE: Progress indicators not currently updating in Chrome.
 
+* ISSUE: Update Server/Service path disabled for bug fixing.
+
 [View it live](http://pholleran.github.com/agoAdminTools/index.html)
 
 ## Features
