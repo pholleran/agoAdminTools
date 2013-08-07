@@ -50,7 +50,7 @@ require([
 		DialogSimple,
 		app){
 		
-		// Create Alert Dialog
+		/* Create Alert Dialog
 		var alertDialog = new DialogSimple({
 			id: "alertDialog",
 			title: "Alert",
@@ -59,7 +59,8 @@ require([
 			style: "width: 300px;"
 		});
 		alertDialog.startup();
-		
+		*/
+
 		var progressDialog = new DialogSimple({
 			id: "progressDialog",
 			title: "Progress",
