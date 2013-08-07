@@ -132,13 +132,14 @@ require([
         });
         taskMenu.addChild(shortUrlItem);
         
+        /*
         var serverNameItem = new MenuItem({
         	id: "serverNameItem",
         	label: "Update Server/Service Path",
         	onClick: function(){app.makeTab("serverNameTab","Update Server/Service Path","./custom/templates/updateServerNameTab.html")},
         });
         taskMenu.addChild(serverNameItem);
-
+	*/
         /*
         var eMailItem = new MenuItem({
         	id: "eMailItem",
