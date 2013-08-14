@@ -9,7 +9,8 @@ AGO Admin Tools is a JavaScript application designed to provide additional admin
 ## Features
 
 * Change Default Map Extent - Always have the map zoom to your AOI
-* Update urlKey - change the URL to your org: http://<urlKey>.maps.arcgis.com
+* Change urlKey - change the URL to your org: http://<urlKey>.maps.arcgis.com
+* Create Custom Basemap - create a multi-layer basemap
 * Update Server/Service Path - Update server/service paths for registered items and webmaps
 
 ## Structure
