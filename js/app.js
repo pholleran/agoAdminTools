@@ -29,6 +29,7 @@ define([
 		});
 
 		currentPortal.signIn().then(function(loggedInUser){
+			console.log(loggedInUser);
 			if (loggedInUser.role != 'org_admin') {
 				alert("You must be an administrator in your org to use this tool.");
 				portal.signOut();
@@ -44,18 +45,20 @@ define([
 		registry.byId("taskButton").set("disabled",false);
 		registry.byId("portalInput").set("disabled", true);
 
-		sessionStorage.setItem("token",loggedInUser.credential.token);
-		sessionStorage.setItem("portalID",loggedInUser.portal.id);
-		sessionStorage.setItem("portalUrl",loggedInUser.portal.portalUrl);
-		sessionStorage.setItem("urlKey",loggedInUser.portal.urlKey);
-		sessionStorage.setItem("defaultBasemap",JSON.stringify(loggedInUser.portal.defaultBasemap));
-		sessionStorage.setItem("defaultExtent",JSON.stringify(loggedInUser.portal.defaultExtent));
+		sessionStorage.setItem("userName", loggedInUser.username);
+		sessionStorage.setItem("token", loggedInUser.credential.token);
+		sessionStorage.setItem("portalID", loggedInUser.portal.id);
+		sessionStorage.setItem("portalUrl", loggedInUser.portal.portalUrl);
+		sessionStorage.setItem("urlKey", loggedInUser.portal.urlKey);
+		sessionStorage.setItem("defaultBasemap", JSON.stringify(loggedInUser.portal.defaultBasemap));
+		sessionStorage.setItem("defaultExtent", JSON.stringify(loggedInUser.portal.defaultExtent));
 	
 		// Change button to logOut State
 		registry.byId("loginButton").set("label","Log Out");
 		registry.byId("loginButton").set("onClick", function(){logOut()});
 		dom.byId("orgName").innerHTML = currentPortal.name;
 		dom.byId("siteTitle").innerHTML = "AGO Admin Tools (BETA): " + currentPortal.name;
+
 	}
 
 	function logOut(){
