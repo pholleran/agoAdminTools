@@ -4,13 +4,15 @@ define([
     "dojo/_base/array",
     "dojo/Deferred",
     "dojo/dom",
+    "dojo/promise/all",
     "dojo/regexp",
+    "dojo/request/xhr",
 
     "esri/request",
 
     "js/app"
 
-], function (registry, array, Deferred, dom, regexp, esriRequest, app) {
+], function (registry, array, Deferred, dom, all, regexp, xhr, esriRequest, app) {
 
     var vOldPath, vNewPath, pattern, urlBasedItems;
 
@@ -357,7 +359,7 @@ define([
 
     // function to update the URL of a URL-based item
     // acecpts the itemId as a string, owner (user) name as a string, data as an object for the data to be passed in the post
-    //     and folderId as an string if the item is within a user folder
+    // and folderId as an string if the item is within a user folder
     function updateURLbasedItem (itemId, user, data, folderId) {
         
         var itemUpdateURL, updateURLitemDef, updateURLitemReq;
@@ -387,10 +389,189 @@ define([
         return updateURLitemDef.promise;
     }
 
+    function createCustomBasemap (baseFormObj) {
+
+        var baseServiceInfo, overlayServiceInfo;
+        all([
+            retrieveServiceJSON(baseFormObj.baseLayer.url),
+            retrieveServiceJSON(baseFormObj.overlayLayer.url)
+        ]).then(function (results){
+            compareServiceJSON(results).then(function (results){
+                if (results){
+                    baseMapLayers = [];
+                    baseMap = {};
+                    baseMapData = {};
+
+                    baseMapLayers.push(baseFormObj.baseLayer);
+                    baseMapLayers.push(baseFormObj.overlayLayer);
+
+                    baseMap.baseMapLayers = baseMapLayers;
+                    baseMap.title = baseFormObj.itemData.title;
+
+
+                    baseMapData.operationalLayers = [];
+                    baseMapData.baseMap = baseMap;
+                    baseMapData.version = "1.9";
+
+                    var stringified = JSON.stringify(baseMapData);
+
+                    var extent = JSON.stringify([[-180, 90],[180, -90]]);
+
+                    baseMapPOST = {
+                        f: 'json',
+                        text: stringified,
+                        title: baseFormObj.itemData.title,
+                        extent: extent,
+                        type: 'Web Map',
+                    };
+
+                    mapReqURL = sessionStorage.getItem("portalUrl") + "content/users/" + sessionStorage.getItem("userName") + '/addItem';
+
+                    mapReq = new esriRequest({
+                        url: mapReqURL,
+                        content: baseMapPOST,
+                    },{
+                        usePost: true
+                    });
+
+                    mapReq.then(function (results){
+                        if (results.success === true) {
+                            alert("A webmap with the item ID: " + results.id + " has been created in " + sessionStorage.getItem("userName") + "'s root folder.");
+                            resetCustomBasemapTab();
+                        }
+                        else {
+                            alert("An error has occured.");
+                            resetCustomBasemapTab();
+                        }
+                    });
+                    
+                }
+                else {
+                    resetCustomBasemapTab();
+                }
+            });
+        });
+
+        var baseMapLayers, baseMap, baseMapData, baseMapPOST, mapReq, mapReqURL;
+    }
+
+    function retrieveServiceJSON (serviceURL) {
+        var svcJSONdeferred, svcReq;
+        svcJSONdeferred = new Deferred();
+
+        svcReq = new esriRequest({
+            url: serviceURL, 
+            content: {f:'pjson'},
+            callbackParamName: 'callback',
+        });
+
+        svcReq.then(function (results){
+            svcJSONdeferred.resolve(results);
+        });
+
+        return svcJSONdeferred.promise;
+    }
+
+    // takes an argument (services) consisting of two elements
+    // - each element is a JSON service description [base,overlay]- 
+    // and compares them
+    function compareServiceJSON (services) {
+        var compSvcDef = new Deferred();
+        // check if first service is cached
+        if (services[0].singleFusedMapCache === true) {
+            // if yes, check if second is cached
+            if (services[1].singleFusedMapCache === true) {
+                // if yes, make sure coordinate systems and tiling schemes match
+                if (services[0].tileInfo.spatialReference.wkid === services[1].tileInfo.spatialReference.wkid && JSON.stringify(services[0].tileInfo.lods) === JSON.stringify(services[1].tileInfo.lods)) {
+                    compSvcDef.resolve(services);
+                }
+                // if no, throw a warning and wait for response
+                else {
+                    if (confirm("The coordinate systems and/or tiling schemes of the cached services do not match. The resulting map may not work properly. Click 'OK' to continue or 'Cancel' to stop.")){
+                        compSvcDef.resolve(services);
+                    }
+                    else {
+                        compSvcDef.resolve();
+                    }
+                }
+            }
+            // if second is not cached
+            else {
+                // check if coordinate systems match
+                if (services[0].spatialReference.wkid === services[1].spatialReference.wkid) {
+                    // if yes, resolve
+                    compSvcDef.resolve(services);
+                }
+                else {
+                    if (confirm("The coordinate systems of the services do not match. The resulting map may not work properly. Click 'OK' to continue or 'Cancel' to stop.")){
+                        compSvcDef.resolve(services);
+                    }
+                    else {
+                        compSvcDef.resolve();
+                    }
+                }
+            }
+        }
+        // if first is not cached
+        else {
+            // check if second service is cached
+            if (services[1].singleFusedMapCache === true) {
+                // if yes, check if coordinate systems match
+                if (services[0].spatialReference.wkid === services[1].spatialReference.wkid){
+                    // resolve if yes
+                    compSvcDef.resolve(services);
+                }
+                // if coordinate systems don't match throw a warning and wait for response
+                else {
+                    if (confirm("The coordinate systems of the services do not match. The resulting map may not work properly. Click 'OK' to continue or 'Cancel' to stop.")){
+                        compSvcDef.resolve(services);
+                    }
+                    else {
+                        compSvcDef.resolve();
+                    }
+                }
+            }
+            // if second service is not cached
+            else {
+                // check if coordinate systems match
+                if (services[0].spatialReferenc.wkid === services[1].spatialReference.wkid){
+                    // resolve if yes
+                    compSvcDef.resolve(services);
+                }
+                // throw a warning and wait for response if no
+                else {
+                    if (confirm("The coordinate systems of the services do not match. The resulting map may not work properly. Click 'OK' to continue or 'Cancel' to stop.")){
+                        compSvcDef.resolve(services);
+                    }
+                    else {
+                        compSvcDef.resolve();
+                    }
+                }
+            }
+        }
+        return compSvcDef.promise;
+    }
+
+    function resetCustomBasemapTab () {
+        registry.byId('baseLayerURL').set('value', '');
+        registry.byId('baseLayerURL').reset();
+        registry.byId('baseLayerOpacity').set('value', '');
+        registry.byId('baseLayerOpacity').reset();
+        registry.byId('overlayLayerURL').set('value', '');
+        registry.byId('overlayLayerURL').reset();
+        registry.byId('overlayLayerOpacity').set('value', '');
+        registry.byId('overlayLayerOpacity').reset();
+        registry.byId('overlayLayerReference').set('value', true);
+        registry.byId('itemTitle').set('value', '');
+        registry.byId('itemTitle').reset();
+        // registry.byId('itemTags').set('value', 'Tag, Tag');
+    }
+
     return {
         getUserInfos: getUserInfos,
         updateShortUrl: updateShortUrl,
         updateAllItemURLs: updateAllItemURLs,
+        createCustomBasemap: createCustomBasemap,
     };  
 });
         

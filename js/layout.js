@@ -131,6 +131,13 @@ require([
         	onClick: function(){app.makeTab("shortUrlTab","Change URL Key","./custom/templates/shortUrlTab.html")},
         });
         taskMenu.addChild(shortUrlItem);
+
+        var customBasemapItem = new MenuItem({
+            id: "customBaesmapItem",
+            label: "Create Custom Basemap - NEW!",
+            onClick: function(){app.makeTab("customBasemapTab","Create a Custom Basemap","./custom/templates/customBasemapTab.html")},
+        });
+        taskMenu.addChild(customBasemapItem);
         
         var serverNameItem = new MenuItem({
         	id: "serverNameItem",
