@@ -1,0 +1,153 @@
+<div>
+	<div id="customBasemapCP" data-dojo-type="dijit/layout/ContentPane" style="margin:10px">
+		
+		<div id="customBasemapDescription" style="width:60%">
+			<h1 class="blue">Description</h1>
+			<p>This task will create a multi-layer basemap. The Base Layer will appear on the bottom and the Overlay Layer will appear on top.  If <i>is Reference</i> is checked, operational layers will
+				appear in between the Base Layer and the Overlay Layer.</p>
+			<p>The item will appear in the logged-in user's root folder. From the item details page, the user should provide further details about the item including
+				a description, access and use constraints, a thumbnail, and a custom extent.</p> 
+			<p> * code inspired by a python script posted to <a href='https://github.com/tswanson/AGO_AddItem_Basemap' target='_blank'>GitHub</a> by Tom Swanson.</p>
+		</div>
+		<br>
+		<div id="customBasemapForm" data-dojo-type="dijit/form/Form">
+			<table class="form">
+				<tr>
+					<td>
+						<p><h2>Base Layer&nbsp;</h2></p>
+					</td>
+				</tr>
+				<tr>
+					<td class='leftPad'>
+						<p><b>URL:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="baseLayerURL" 
+									data-dojo-type="dijit/form/ValidationTextBox"
+									data-dojo-props="missingMessage:'A URL is required.'"  
+									placeHolder="http://myserver/arcgis/rest/services/myService/mapServer" 
+									required="true"></p>
+					</td>
+				</tr>
+				<tr>
+					<td class='leftPad'>
+						<p><b>Opacity:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="baseLayerOpacity" 
+									data-dojo-type="dijit/form/NumberTextBox"
+									data-dojo-props="constraints:{min:0,max:1},invalidMessage:'Enter a value between 0.0 and 1.0'" 
+									placeHolder="1.0" 
+									required="true"></p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p><h2>Overlay Layer&nbsp;</h2></p>
+					</td>
+				</tr>
+				<tr>
+					<td class='leftPad'>
+						<p><b>URL:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="overlayLayerURL" 
+									data-dojo-type="dijit/form/ValidationTextBox"
+									data-dojo-props="missingMessage:'A URL is required.'"  
+									placeHolder="http://myserver/arcgis/rest/services/myService/mapServer"
+									required="true"></p>
+					</td>
+				</tr>
+				<tr>
+					<td class='leftPad'>
+						<p><b>Opacity:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="overlayLayerOpacity"
+									data-dojo-type="dijit/form/NumberTextBox"
+									data-dojo-props="constraints:{min:0,max:1},
+										invalidMessage:'Enter a value between 0.0 and 1.0'" 
+									placeHolder="1.0" 
+									required="true"></p>
+					</td>
+				</tr>
+				<tr>
+					<td class='leftPad'>
+						<p><b>Is Reference:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="overlayLayerReference" 
+									data-dojo-type="dijit/form/CheckBox" 
+									checked="true"></p>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<p><h2>Item&nbsp;</h2></p>
+					</td>
+				</tr>
+				<tr>
+					<td class='leftPad'>
+						<p><b>Title:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="itemTitle" 
+									data-dojo-type="dijit/form/ValidationTextBox"
+									data-dojo-props="missingMessage:'A title is required.'"  
+									placeHolder="Title for the Webmap" 
+									required="true"></p>
+					</td>
+				</tr>
+				<!-- Tags functionality coming soon
+				<tr>
+					<td>
+						<p><b>Tags:&nbsp;</b></p>
+					</td>	
+					<td>
+						<p><input 	id="itemTags" 
+									data-dojo-type="dijit/form/ValidationTextBox"
+									data-dojo-props="missingMessage:'At least one tag is required.'"  
+									placeHolder="Tag, Tag"
+									required="true"></p>
+					</td>
+				</tr>
+				-->
+			</table>
+		</div>
+		<div id="customBasemapButtonDiv">
+			<button id="customBasemapButton" data-dojo-type="dijit.form.Button" data-dojo-props="">
+				<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+			        require(["dijit/registry", "js/portal",], function (registry, portal){
+			        	var baseFormObj, baseLayer, overlayLayer, itemData;
+
+			        	baseFormObj = {};
+			        	baseFormObj.baseLayer = {};
+			        	baseFormObj.overlayLayer = {};
+			        	baseFormObj.itemData = {};
+
+			        	// baseFormObj.baseLayer.id = registry.byId("baseLayerID").get("value");
+				        baseFormObj.baseLayer.opacity = 1;
+				        baseFormObj.baseLayer.visibility = true;
+				        baseFormObj.baseLayer.url = registry.byId("baseLayerURL").get("value");
+
+				        // baseFormObj.overlayLayer.id = registry.byId("overlayLayerID").get("value");
+				        if (registry.byId("overlayLayerReference").get("checked") === true) {
+				            baseFormObj.overlayLayer.isReference = true;
+				        }
+				        else {
+				        	baseFormObj.overlayLayer.isReference = false;
+				        }
+				        baseFormObj.overlayLayer.opacity = (registry.byId("overlayLayerOpacity").get("value"));
+				        baseFormObj.overlayLayer.visibility = true;
+				        baseFormObj.overlayLayer.url = (registry.byId("overlayLayerURL").get("value"));
+
+				        baseFormObj.itemData.title = registry.byId("itemTitle").get("value");
+				        
+			        	portal.createCustomBasemap(baseFormObj)});
+			    </script>
+				Create Basemap
+			</button>
+		</div>
+	</div>
+</div>
