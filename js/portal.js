@@ -188,7 +188,6 @@ define([
         return puDef.promise;
     }
 
-    // function to process items
     function processItems (items, user, folderId) {
         var piDef = new Deferred();
         var itmsComplete = 0;
