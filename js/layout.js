@@ -141,8 +141,9 @@ require([
         
         var serverNameItem = new MenuItem({
         	id: "serverNameItem",
-        	label: "Update Server/Service Path",
-        	onClick: function(){app.makeTab("serverNameTab","Update Server/Service Path","./custom/templates/updateServerNameTab.html")},
+        	label: "Update Server/Service Path -- Offline For Maintenance",
+            onClick: function(){alert("This function has been taken offline for maintenance.")},
+        	// onClick: function(){app.makeTab("serverNameTab","Update Server/Service Path","./custom/templates/updateServerNameTab.html")},
         });
         taskMenu.addChild(serverNameItem);
 
