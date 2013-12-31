@@ -50,8 +50,8 @@ define([
 		sessionStorage.setItem("portalID", loggedInUser.portal.id);
 		sessionStorage.setItem("portalUrl", loggedInUser.portal.portalUrl);
 		sessionStorage.setItem("urlKey", loggedInUser.portal.urlKey);
-		sessionStorage.setItem("defaultBasemap", JSON.stringify(loggedInUser.portal.defaultBasemap));
-		sessionStorage.setItem("defaultExtent", JSON.stringify(loggedInUser.portal.defaultExtent));
+		// sessionStorage.setItem("defaultBasemap", JSON.stringify(loggedInUser.portal.defaultBasemap));
+		// sessionStorage.setItem("defaultExtent", JSON.stringify(loggedInUser.portal.defaultExtent));
 	
 		// Change button to logOut State
 		registry.byId("loginButton").set("label","Log Out");

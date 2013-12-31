@@ -118,12 +118,14 @@ require([
         });
         
         // Build and Add the MenuItems for the ComboButton
+        /*
         var extentItem = new MenuItem({
         	id: "extentItem",
         	label: "Change Default Map Extent",
         	onClick: function(){app.makeTab("extentTab","Change Map Extent","./custom/templates/mapTab.html")},
         });
         taskMenu.addChild(extentItem);
+        */
         
         var shortUrlItem = new MenuItem({
         	id: "shortUrlItem",
