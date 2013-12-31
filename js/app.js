@@ -25,7 +25,7 @@ define([
 		currentPortal = new esriPortal.Portal(registry.byId("portalInput").get("value"));
 
 		on(esri.id, "dialog-cancel", function(info){
-			registry.byId("portalInput").set("value", "http://www.arcgis.com");
+			registry.byId("portalInput").set("value", "https://www.arcgis.com");
 		});
 
 		currentPortal.signIn().then(function(loggedInUser){

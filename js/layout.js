@@ -170,7 +170,7 @@ require([
             id: "portalInput",
             title: " Portal URL: ",
             class: "text",
-            value: "http://www.arcgis.com"
+            value: "https://www.arcgis.com"
         })
         portalInput.placeAt("menuDiv");
 
