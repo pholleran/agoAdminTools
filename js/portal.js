@@ -6,13 +6,16 @@ define([
     "dojo/dom",
     "dojo/promise/all",
     "dojo/regexp",
-    "dojo/request/xhr",
 
     "esri/request",
+    "esri/SpatialReference",
+    "esri/geometry/Extent",
+    "esri/tasks/GeometryService",
+    "esri/tasks/ProjectParameters",
 
     "js/app"
 
-], function (registry, array, Deferred, dom, all, regexp, xhr, esriRequest, app) {
+], function (registry, array, Deferred, dom, all, regexp, esriRequest, SpatialReference, Extent, GeometryService, ProjectParameters, app) {
 
     var vOldPath, vNewPath, pattern, urlBasedItems;
 
@@ -392,12 +395,19 @@ define([
     function createCustomBasemap (baseFormObj) {
 
         var baseServiceInfo, overlayServiceInfo;
+        var svcs = {};
         all([
-            retrieveServiceJSON(baseFormObj.baseLayer.url),
-            retrieveServiceJSON(baseFormObj.overlayLayer.url)
-        ]).then(function (results){
-            compareServiceJSON(results).then(function (results){
+            retrieveServiceJSON(baseFormObj.baseLayer.url).then(function(results){
+                svcs.base = results;
+            }),
+            retrieveServiceJSON(baseFormObj.overlayLayer.url).then(function(results){
+                svcs.overlay = results;
+            })
+        ]).then(function (){
+            compareServiceJSON(svcs).then(function (results){
                 if (results){
+                    console.log(results);
+
                     baseMapLayers = [];
                     baseMap = {};
                     baseMapData = {};
@@ -408,43 +418,52 @@ define([
                     baseMap.baseMapLayers = baseMapLayers;
                     baseMap.title = baseFormObj.itemData.title;
 
-
                     baseMapData.operationalLayers = [];
                     baseMapData.baseMap = baseMap;
-                    baseMapData.version = "1.9";
+                    baseMapData.spatialReference = results.base.spatialReference;
+                    baseMapData.version = "2.0";
 
                     var stringified = JSON.stringify(baseMapData);
 
-                    var extent = JSON.stringify([[-180, 90],[180, -90]]);
+                    var geoSvc = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+                    var outSpRef = new SpatialReference(4326);
+                    var ext = new Extent(results.base.fullExtent);
+                    var params = new ProjectParameters();
 
-                    baseMapPOST = {
-                        f: 'json',
-                        text: stringified,
-                        title: baseFormObj.itemData.title,
-                        extent: extent,
-                        type: 'Web Map',
-                    };
+                    params.geometries = [ext];
+                    params.outSR = outSpRef;
 
-                    mapReqURL = sessionStorage.getItem("portalUrl") + "content/users/" + sessionStorage.getItem("userName") + '/addItem';
+                    geoSvc.project(params).then(function(results){
+                        var extent = JSON.stringify([[Math.round(results[0].xmin * 100)/100, Math.round(results[0].ymin * 100)/100],[Math.round(results[0].xmax * 100)/100, Math.round(results[0].ymax * 100)/100]]);
 
-                    mapReq = new esriRequest({
-                        url: mapReqURL,
-                        content: baseMapPOST,
-                    },{
-                        usePost: true
-                    });
+                        baseMapPOST = {
+                            f: 'json',
+                            text: stringified,
+                            title: baseFormObj.itemData.title,
+                            extent: extent,
+                            type: 'Web Map',
+                            tags: "Basemap",
+                        };
 
-                    mapReq.then(function (results){
-                        if (results.success === true) {
-                            alert("A webmap with the item ID: " + results.id + " has been created in " + sessionStorage.getItem("userName") + "'s root folder.");
-                            resetCustomBasemapTab();
-                        }
-                        else {
-                            alert("An error has occured.");
-                            resetCustomBasemapTab();
-                        }
-                    });
-                    
+                        mapReqURL = sessionStorage.getItem("portalUrl") + "content/users/" + sessionStorage.getItem("userName") + '/addItem';
+                        mapReq = new esriRequest({
+                            url: mapReqURL,
+                            content: baseMapPOST,
+                        },{
+                            usePost: true
+                        });
+
+                        mapReq.then(function (results){
+                            if (results.success === true) {
+                                alert("A webmap with the item ID: " + results.id + " has been created in " + sessionStorage.getItem("userName") + "'s root folder.");
+                                resetCustomBasemapTab();
+                            }
+                            else {
+                                alert("An error has occured.");
+                                resetCustomBasemapTab();
+                            }
+                        });
+                    });         
                 }
                 else {
                     resetCustomBasemapTab();
@@ -477,12 +496,18 @@ define([
     // and compares them
     function compareServiceJSON (services) {
         var compSvcDef = new Deferred();
-        // check if first service is cached
-        if (services[0].singleFusedMapCache === true) {
+
+        console.log(services);
+
+        // check if base service is cached
+        if (services.base.singleFusedMapCache === true) {
+            console.log("base is cached");
             // if yes, check if second is cached
-            if (services[1].singleFusedMapCache === true) {
+            if (services.overlay.singleFusedMapCache === true) {
+                console.log("overlay is cached");
                 // if yes, make sure coordinate systems and tiling schemes match
-                if (services[0].tileInfo.spatialReference.wkid === services[1].tileInfo.spatialReference.wkid && JSON.stringify(services[0].tileInfo.lods) === JSON.stringify(services[1].tileInfo.lods)) {
+                if (services.base.tileInfo.spatialReference.wkid === services.overlay.tileInfo.spatialReference.wkid && JSON.stringify(services.base.tileInfo.lods) === JSON.stringify(services.overlay.tileInfo.lods)) {
+                    console.log("tiling schemes and coordinates match");
                     compSvcDef.resolve(services);
                 }
                 // if no, throw a warning and wait for response
@@ -497,8 +522,10 @@ define([
             }
             // if second is not cached
             else {
+                console.log("overlay is not cached");
                 // check if coordinate systems match
-                if (services[0].spatialReference.wkid === services[1].spatialReference.wkid) {
+                if (services.base.spatialReference.wkid === services.overlay.spatialReference.wkid) {
+                    console.log("coordinate systems match");
                     // if yes, resolve
                     compSvcDef.resolve(services);
                 }
@@ -514,10 +541,13 @@ define([
         }
         // if first is not cached
         else {
+            console.log("base is not cached");
             // check if second service is cached
-            if (services[1].singleFusedMapCache === true) {
+            if (services.overlay.singleFusedMapCache === true) {
+                console.log("overlay is cached");
                 // if yes, check if coordinate systems match
-                if (services[0].spatialReference.wkid === services[1].spatialReference.wkid){
+                if (services.base.spatialReference.wkid === services.overlay.spatialReference.wkid){
+                    console.log("coordinate systems match");
                     // resolve if yes
                     compSvcDef.resolve(services);
                 }
@@ -534,7 +564,8 @@ define([
             // if second service is not cached
             else {
                 // check if coordinate systems match
-                if (services[0].spatialReferenc.wkid === services[1].spatialReference.wkid){
+                if (services.base.spatialReferenc.wkid === services.overlay.spatialReference.wkid){
+                    console.log("overlay is not cached");
                     // resolve if yes
                     compSvcDef.resolve(services);
                 }
@@ -564,7 +595,6 @@ define([
         registry.byId('overlayLayerReference').set('value', true);
         registry.byId('itemTitle').set('value', '');
         registry.byId('itemTitle').reset();
-        // registry.byId('itemTags').set('value', 'Tag, Tag');
     }
 
     return {

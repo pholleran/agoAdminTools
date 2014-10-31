@@ -6,7 +6,7 @@
 			<p>This task will create a multi-layer basemap. The Base Layer will appear on the bottom and the Overlay Layer will appear on top.  If <i>is Reference</i> is checked, operational layers will
 				appear in between the Base Layer and the Overlay Layer.</p>
 			<p>The item will appear in the logged-in user's root folder. From the item details page, the user should provide further details about the item including
-				a description, access and use constraints, a thumbnail, and a custom extent.</p> 
+				a description, access and use constraints, and a thumbnail.</p> 
 			<p> * code inspired by a python script posted to <a href='https://github.com/tswanson/AGO_AddItem_Basemap' target='_blank'>GitHub</a> by Tom Swanson.</p>
 		</div>
 		<br>
@@ -25,7 +25,8 @@
 						<p><input 	id="baseLayerURL" 
 									data-dojo-type="dijit/form/ValidationTextBox"
 									data-dojo-props="missingMessage:'A URL is required.'"  
-									placeHolder="http://myserver/arcgis/rest/services/myService/mapServer" 
+									placeHolder="http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer
+" 
 									required="true"></p>
 					</td>
 				</tr>
@@ -36,8 +37,9 @@
 					<td>
 						<p><input 	id="baseLayerOpacity" 
 									data-dojo-type="dijit/form/NumberTextBox"
-									data-dojo-props="constraints:{min:0,max:1},invalidMessage:'Enter a value between 0.0 and 1.0'" 
-									placeHolder="1.0" 
+									data-dojo-props="constraints:{min:0,max:1,pattern:'0.0'},invalidMessage:'Enter a value between 0.0 and 1.0'" 
+									constraints = "{min:0,max:1,pattern:'0.0'}"
+									value="1.0" 
 									required="true"></p>
 					</td>
 				</tr>
@@ -54,7 +56,7 @@
 						<p><input 	id="overlayLayerURL" 
 									data-dojo-type="dijit/form/ValidationTextBox"
 									data-dojo-props="missingMessage:'A URL is required.'"  
-									placeHolder="http://myserver/arcgis/rest/services/myService/mapServer"
+									placeHolder="http://tiles.arcgis.com/tiles/TLdVcW1aE8FOKj1g/arcgis/rest/services/Imagery_Tile_Aug/MapServer"
 									required="true"></p>
 					</td>
 				</tr>
@@ -65,10 +67,10 @@
 					<td>
 						<p><input 	id="overlayLayerOpacity"
 									data-dojo-type="dijit/form/NumberTextBox"
-									data-dojo-props="constraints:{min:0,max:1},
+									data-dojo-props="constraints:{min:0,max:1,pattern:'0.0'},
 										invalidMessage:'Enter a value between 0.0 and 1.0'" 
-									placeHolder="1.0" 
-									required="true"></p>
+									value="1.0" 
+									required="true" value="1.0"></p>
 					</td>
 				</tr>
 				<tr>
@@ -127,6 +129,7 @@
 			        	baseFormObj.itemData = {};
 
 			        	// baseFormObj.baseLayer.id = registry.byId("baseLayerID").get("value");
+				        baseFormObj.baseLayer.id = "baseLayer_001";
 				        baseFormObj.baseLayer.opacity = 1;
 				        baseFormObj.baseLayer.visibility = true;
 				        baseFormObj.baseLayer.url = registry.byId("baseLayerURL").get("value");
@@ -138,6 +141,7 @@
 				        else {
 				        	baseFormObj.overlayLayer.isReference = false;
 				        }
+				        baseFormObj.overlayLayer.id = "overlayLayer_001";
 				        baseFormObj.overlayLayer.opacity = (registry.byId("overlayLayerOpacity").get("value"));
 				        baseFormObj.overlayLayer.visibility = true;
 				        baseFormObj.overlayLayer.url = (registry.byId("overlayLayerURL").get("value"));

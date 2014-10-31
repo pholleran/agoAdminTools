@@ -136,7 +136,7 @@ require([
 
         var customBasemapItem = new MenuItem({
             id: "customBaesmapItem",
-            label: "Create Custom Basemap - NEW!",
+            label: "Create Custom Basemap",
             onClick: function(){app.makeTab("customBasemapTab","Create a Custom Basemap","./custom/templates/customBasemapTab.html")},
         });
         taskMenu.addChild(customBasemapItem);
