@@ -5,7 +5,7 @@ This project is no longer maintained. I am no longer with Esri and do not have a
 
 AGO Admin Tools is a JavaScript application designed to provide additional administrative capabilities to ArcGIS Online.
 
-[View it live](https://174.129.223.249/agoAdminTools/)
+[View it live](https://pholleran.github.io/agoAdminTools/)
 
 ## Features
 
